@@ -12,8 +12,8 @@ const CARDS = [
     key: "medical" as const,
     title: "Медицинская форма",
     emoji: "🩺",
-    image: "/products/med-w-navy-belt.jpg",
-    count: "10 моделей",
+    image: "/products/viktoriya/1.jpg",
+    count: "13 моделей",
   },
   {
     key: "chef" as const,

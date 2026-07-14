@@ -4,10 +4,10 @@ import { useCallback, useEffect, useState } from "react";
 import { Product, DEFAULT_COLORS } from "./types";
 import { SEED_PRODUCTS } from "./products";
 
-// Bumped when the Product shape changes (e.g. adding `colors`) so old
-// browsers with stale localStorage data don't crash on missing fields.
-const STORAGE_KEY = "medchef_products_v2";
-const LEGACY_STORAGE_KEY = "medchef_products_v1";
+// Bumped whenever the seed catalog changes meaningfully (new/renamed models,
+// shape changes) so browsers with older cached data get the fresh catalog
+// instead of silently keeping stale products forever.
+const STORAGE_KEY = "medchef_products_v3";
 const EVENT_NAME = "medchef-products-changed";
 
 const DEFAULT_SIZES = [46, 48, 50, 52, 54, 56];
@@ -41,12 +41,10 @@ function readAll(): Product[] {
       const parsed = JSON.parse(raw) as Partial<Product>[];
       return parsed.map(normalize);
     }
-
-    // migrate from the old schema if present, so admin edits aren't lost
-    const legacy = window.localStorage.getItem(LEGACY_STORAGE_KEY);
-    const seeded = legacy ? (JSON.parse(legacy) as Partial<Product>[]).map(normalize) : SEED_PRODUCTS;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
-    return seeded;
+    // no v3 data yet — seed fresh from the current catalog (intentionally
+    // not migrating older v1/v2 data forward, since the product lineup itself changed)
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED_PRODUCTS));
+    return SEED_PRODUCTS;
   } catch {
     return SEED_PRODUCTS;
   }

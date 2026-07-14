@@ -286,6 +286,7 @@ export default function AdminPage() {
                   >
                     <option value="female">Женская</option>
                     <option value="male">Мужская</option>
+                    <option value="unisex">Унисекс</option>
                   </select>
                 </Field>
               </div>

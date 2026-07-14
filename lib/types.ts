@@ -1,5 +1,5 @@
 export type Category = "medical" | "chef";
-export type Gender = "male" | "female";
+export type Gender = "male" | "female" | "unisex";
 
 export interface ProductColor {
   name: string;
@@ -32,6 +32,7 @@ export const CATEGORY_LABEL: Record<Category, string> = {
 export const GENDER_LABEL: Record<Gender, string> = {
   male: "Мужская",
   female: "Женская",
+  unisex: "Унисекс",
 };
 
 export const DEFAULT_COLORS: ProductColor[] = [

@@ -23,6 +23,7 @@ const GENDER_TABS: { key: GenderFilter; label: string }[] = [
   { key: "all", label: "Все" },
   { key: "male", label: "Мужская" },
   { key: "female", label: "Женская" },
+  { key: "unisex", label: "Унисекс" },
 ];
 
 export default function Catalog({ products, initialCategory = "all" }: Props) {
