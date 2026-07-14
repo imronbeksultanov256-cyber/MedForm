@@ -19,7 +19,7 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
       <Link href={`/product/${product.slug}`} className="block">
         <div className="relative aspect-[3/4] overflow-hidden bg-ice">
           <Image
-            src={product.images[0]}
+            src={product.images?.[0] ?? "/products/med-w-teal.jpg"}
             alt={product.name}
             fill
             className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.06]"
@@ -48,7 +48,7 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
           <p className="font-display font-bold text-navy text-base sm:text-lg">
             {product.price} сом
           </p>
-          {product.colors.length > 0 && (
+          {(product.colors?.length ?? 0) > 0 && (
             <div className="flex gap-1 mt-2">
               {product.colors.slice(0, 5).map((c) => (
                 <span

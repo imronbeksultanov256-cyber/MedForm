@@ -1,21 +1,52 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Product } from "./types";
+import { Product, DEFAULT_COLORS } from "./types";
 import { SEED_PRODUCTS } from "./products";
 
-const STORAGE_KEY = "medchef_products_v1";
+// Bumped when the Product shape changes (e.g. adding `colors`) so old
+// browsers with stale localStorage data don't crash on missing fields.
+const STORAGE_KEY = "medchef_products_v2";
+const LEGACY_STORAGE_KEY = "medchef_products_v1";
 const EVENT_NAME = "medchef-products-changed";
+
+const DEFAULT_SIZES = [46, 48, 50, 52, 54, 56];
+
+/** Fills in any fields missing from older/cached product records. */
+function normalize(raw: Partial<Product>): Product {
+  return {
+    id: raw.id ?? `p_${Math.random().toString(36).slice(2)}`,
+    slug: raw.slug ?? "",
+    name: raw.name ?? "Без названия",
+    price: typeof raw.price === "number" ? raw.price : 1700,
+    category: raw.category ?? "medical",
+    gender: raw.gender ?? "female",
+    description: raw.description ?? "",
+    material: raw.material ?? "",
+    sizes: Array.isArray(raw.sizes) && raw.sizes.length ? raw.sizes : DEFAULT_SIZES,
+    colors: Array.isArray(raw.colors) && raw.colors.length ? raw.colors : DEFAULT_COLORS,
+    images: Array.isArray(raw.images) && raw.images.length ? raw.images : ["/products/med-w-teal.jpg"],
+    isNew: Boolean(raw.isNew),
+    isBestseller: Boolean(raw.isBestseller),
+    hidden: Boolean(raw.hidden),
+    createdAt: typeof raw.createdAt === "number" ? raw.createdAt : Date.now(),
+  };
+}
 
 function readAll(): Product[] {
   if (typeof window === "undefined") return SEED_PRODUCTS;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED_PRODUCTS));
-      return SEED_PRODUCTS;
+    if (raw) {
+      const parsed = JSON.parse(raw) as Partial<Product>[];
+      return parsed.map(normalize);
     }
-    return JSON.parse(raw) as Product[];
+
+    // migrate from the old schema if present, so admin edits aren't lost
+    const legacy = window.localStorage.getItem(LEGACY_STORAGE_KEY);
+    const seeded = legacy ? (JSON.parse(legacy) as Partial<Product>[]).map(normalize) : SEED_PRODUCTS;
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
+    return seeded;
   } catch {
     return SEED_PRODUCTS;
   }

@@ -10,8 +10,12 @@ import { COLOR_ICONS } from "@/lib/colorIcons";
 import ProductGallery from "./ProductGallery";
 
 export default function ProductDetail({ product }: { product: Product }) {
+  const colors = product.colors ?? [];
+  const sizes = product.sizes ?? [];
+  const images = product.images?.length ? product.images : ["/products/med-w-teal.jpg"];
+
   const [size, setSize] = useState<number | null>(null);
-  const [color, setColor] = useState<string | null>(product.colors[0]?.name ?? null);
+  const [color, setColor] = useState<string | null>(colors[0]?.name ?? null);
   const [quantity, setQuantity] = useState(1);
 
   const ready = Boolean(size && color);
@@ -32,7 +36,7 @@ export default function ProductDetail({ product }: { product: Product }) {
       </div>
 
       <div className="mx-auto max-w-5xl px-4 sm:px-6 pt-5 sm:pt-8 grid sm:grid-cols-2 gap-8">
-        <ProductGallery images={product.images} name={product.name} />
+        <ProductGallery images={images} name={product.name} />
 
         <div>
           <p className="text-sky-600 text-sm font-semibold mb-2">
@@ -50,13 +54,13 @@ export default function ProductDetail({ product }: { product: Product }) {
             {product.material}
           </div>
 
-          {product.colors.length > 0 && (
+          {colors.length > 0 && (
             <div className="mb-6">
               <p className="font-display font-semibold text-navy mb-3">
                 Цвет{color ? `: ${color}` : ""}
               </p>
               <div className="flex flex-wrap gap-3">
-                {product.colors.map((c) => {
+                {colors.map((c) => {
                   const icon = COLOR_ICONS[c.name];
                   return (
                     <button
@@ -88,7 +92,7 @@ export default function ProductDetail({ product }: { product: Product }) {
           <div className="mb-4">
             <p className="font-display font-semibold text-navy mb-3">Выберите размер</p>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-              {product.sizes.map((s) => (
+              {sizes.map((s) => (
                 <button
                   key={s}
                   onClick={() => setSize(s)}

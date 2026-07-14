@@ -28,7 +28,7 @@ function shuffle<T>(arr: T[]): T[] {
 
 function buildSlides(products: Product[]): Slide[] {
   return products
-    .filter((p) => !p.hidden && p.images.length > 0)
+    .filter((p) => !p.hidden && (p.images?.length ?? 0) > 0)
     .map((p) => ({
       image: p.images[0],
       eyebrow: CATEGORY_LABEL[p.category],
